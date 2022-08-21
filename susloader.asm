@@ -9,6 +9,7 @@ start: jmp boot
 ;; define variables and constants
 msg: dq "Booting the sussiest OS! >w< "
 endmsg:
+clr: db " "
 
 putChar:
     mov ah, 2 ; move cursor to pos
@@ -23,6 +24,29 @@ boot:
     cli ; no interrupts
     cld ; for init
 
+    ;clear screen
+    mov cx, 1
+    xor dx, dx ; start at 0,0
+    mov ds, dx
+    mov bl, 00h ; black
+    
+clearScr:
+    mov si, msg
+    mov ah,2 
+    int 10h
+    lodsb
+    mov ah, 9
+    int 10h 
+    inc dl
+    
+    cmp dl, 80 ; wrap around the whole screen
+    jne clearScr
+    inc dh
+    xor dl, dl ; inc row and set column to 0
+    
+    cmp dh,25 
+    jne clearScr
+
     ;init 
     mov si, msg ; si points to first byte of our message
     xor dx, dx ; to 0
@@ -32,7 +56,7 @@ boot:
     
    
     mov bh, 0 
-    mov dh, 13 ; row
+    mov dh, 10 ; row
     mov dl, 25 ; column 
 print:       
     cmp si, endmsg ; print until end of message
