@@ -16,7 +16,7 @@ os:
 qfast:
 	qemu-system-i386 -machine q35 -fda  $(DISK_IMG) 
 qemu:
-	qemu-system-i386 -machine q35 -fda $(DISK_IMG) -gdb -tcp:26000 -S
+	qemu-system-i386 -machine q35 -fda $(DISK_IMG) -gdb tcp::26000 -S
 
 
 bootdisk: bootloader os
