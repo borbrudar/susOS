@@ -5,8 +5,8 @@ DISK_IMG=$(BUILD_DIR)/disk.img.o
 
 all: bootdisk
 
-.PHONY: bootdisk bootloader os qemu qfast
-
+.PHONY: bootdisk bootloader os qemu qfast link
+	
 bootloader:
 	make -C susloader
 
@@ -27,3 +27,8 @@ bootdisk: bootloader os
 clean:
 	make -C susloader clean
 	make -C sus clean
+
+
+link:
+	gcc -m32 -masm=intel -g -c main.c
+	ld -m elf_i386 -o main -T link.lds main.o
