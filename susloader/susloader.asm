@@ -2,7 +2,7 @@
 ; susloader >_<
 ; v0.2
 ;*********************************************
-org 0x7c00
+;org 0x7c00
 bits 16
 start: jmp boot
 
