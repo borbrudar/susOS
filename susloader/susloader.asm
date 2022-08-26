@@ -78,8 +78,8 @@ print:
     mov ah, 0x02 ; BIOS function 13, subroutine 2, reading from disk 
     int 0x13 ; BIOS call      
     ; jmp 0x50:0x0 ; jump to sector 
-    jmp 0x500 ; apparently relative addressing doesnt resolve correctly (?)    
-
+    jmp [500h + 18h] ; apparently relative addressing doesnt resolve correctly (?)    
+	      ; +18 is to read the entry address from the elf header
     hlt ; halt the system
 
 ; 512 bytes required. clear the rest with 0

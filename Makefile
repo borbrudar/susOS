@@ -1,6 +1,6 @@
 BUILD_DIR=build
 BOOTLOADER=$(BUILD_DIR)/susloader/susloader.o
-OS=$(BUILD_DIR)/sus/sample.o
+OS=$(BUILD_DIR)/sus/main
 DISK_IMG=$(BUILD_DIR)/disk.img.o
 
 all: bootdisk
