@@ -13,7 +13,7 @@ $(OS_OBJS): $(OS_SRCS)
 	gcc $(CFLAGS) -c $< -o $@
 
 $(OS): $(OS_OBJS)
-	ld -m elf_i386 -T sus.lds $(OS_OBJS) -o $(OS_OUT)
+	ld -m elf_i386 --nmagic -T sus.lds $(OS_OBJS) -o $(OS_OUT)
 
 clean:
 	rm $(OS)/*
