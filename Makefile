@@ -49,7 +49,7 @@ kernel.elf : boot/kernel_entry.o ${OBJ}
 
 debug: os-image.bin kernel.elf
 	qemu-system-i386 -s -fda os-image.bin &
-	${GDB} -ex "target remote localhost:1234" -ex "symbol-file kernel.bin"
+	${GDB} -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
 
 
 # phony clean target
