@@ -34,13 +34,11 @@ load_kernel:
 	ret
 
 [bits 32]
-
 BEGIN_PM:
 	mov ebx, HELLO32
 	call print32
 
 	call KERNEL_OFFSET ; jump to kernel position yatta
-
 	jmp $
 
 ;globals

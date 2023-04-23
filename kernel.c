@@ -1,3 +1,7 @@
+void dummy_function(){
+
+}
+
 int main(){
 	// create a pointer to video memory
 	char *video_memory = (char*) 0xb8000;
