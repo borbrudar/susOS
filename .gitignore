@@ -1,3 +1,11 @@
 build/
 bare_bones/build
 boot_experiment/build
+.*bin
+os-image
+.*o
+kernel/*.o
+drivers/*.o
+boot/*.o
+boot/*.bin
+*.dis
