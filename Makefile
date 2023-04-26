@@ -6,7 +6,7 @@
 CC=i386-elf-g++
 LD=i386-elf-ld
 GDB=i386-elf-gdb
-FLAGS=-ffreestanding -g
+FLAGS=-ffreestanding -g -fpermissive
 #DEBUG_FLAGS=-g
 
 
@@ -19,7 +19,7 @@ OBJ = ${C_SOURCES:.c=.o}
 all: os-image.bin
 
 run : all
-	qemu-system-i386 -fda os-image
+	qemu-system-i386 -fda os-image.bin
 
 
 #build os image --- rember: boot.bin must be first
