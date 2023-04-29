@@ -35,9 +35,27 @@ extern "C" void isr29();
 extern "C" void isr30();
 extern "C" void isr31();
 
+// define irq or interrupt requests
+#define irq0 32
+#define irq1 33
+#define irq2 34
+#define irq3 35
+#define irq4 36
+#define irq5 37
+#define irq6 38
+#define irq7 39
+#define irq8 40
+#define irq9 41
+#define irq10 42
+#define irq11 43
+#define irq12 44
+#define irq13 45
+#define irq14 46
+#define irq15 47
 
-//registers struct tf???
 
+
+//registers struct for some reason idfk
 typedef struct{
 	u32 ds; // data segment
 	u32 edi, esi, ebp, esp, edx, ecx, eax; // used by pusha
@@ -47,3 +65,6 @@ typedef struct{
 
 extern "C" void isr_install();
 extern "C" void isr_handler(registers_t r);
+
+typedef void (*isr_t)(registers_t);
+extern "C" void register_interrupt_handler(u8 n,isr_t handler);
