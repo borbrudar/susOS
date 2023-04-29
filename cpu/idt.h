@@ -24,6 +24,7 @@ typedef struct{
 } __attribute__((packed)) idt_register_t;
 
 
+
 //functions
 void set_idt_gate(int n, u32 handler);
 void set_idt();

@@ -6,7 +6,7 @@
 CC=/usr/local/i386elfgcc/bin/i386-elf-g++
 LD=/usr/local/i386elfgcc/bin/i386-elf-ld
 GDB=/usr/local/i386elfgcc/bin/i386-elf-gdb
-FLAGS=-ffreestanding -g -fpermissive
+FLAGS=-ffreestanding -g -fpermissive -w
 #DEBUG_FLAGS=-g
 
 
@@ -37,7 +37,7 @@ kernel.elf : boot/kernel_entry.o ${OBJ}
 
 # debug
 debug: os-image.bin kernel.elf
-	qemu-system-i386 -s -fda os-image.bin -d guest_erros,int &
+	qemu-system-i386 -s -fda os-image.bin -d guest_errors,int &
 	${GDB} -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
 
 
