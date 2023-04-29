@@ -1,16 +1,22 @@
 //printchar at col and row or cursor position
-#include "../kernel/ports.h"
+#include "ports.h"
+#include "../kernel/util.h"
 #include "screen.h"
 
+//offset refers to cursor offset
 int print_char(char ch, int row, int col, char attribute);
 int get_screen_offset(int row, int col);
 int get_cursor();
 void set_cursor(int offset);
 int get_offset_row(int offset);
 int get_offset_col(int offset);
-
+int handle_scrolling(int offset);
 
 void clear_screen();
+void kprint(char*message);
+void kprint_at(char*message, int row, int col);
+
+
 
 void kprint_at(char *message, int row, int col){
 	int offset;
@@ -66,6 +72,7 @@ int print_char(char ch, int row, int col, char attribute){
 		offset+=2;
 	}
 
+	offset = handle_scrolling(offset);
 	set_cursor(offset);
 	return offset;
 }
@@ -111,4 +118,24 @@ void clear_screen(){
 		vga[i*2+1] = WHITE_ON_BLACK;
 	}
 	set_cursor(get_screen_offset(0,0));
+}
+
+int handle_scrolling(int offset){
+	if(offset < MAX_ROWS*MAX_COLS*2) return offset;
+
+	// shuffle rows back
+	for(int i =1;i<MAX_ROWS;i++){
+		memory_copy(get_screen_offset(i, 0) + VIDEO_ADDRESS,
+		get_screen_offset(i-1, 0) + VIDEO_ADDRESS,
+		MAX_COLS*2);
+	}
+
+	// set the last line to blank
+	char *last_line = get_screen_offset(MAX_ROWS-1,0) + VIDEO_ADDRESS;
+	for(int i =0;i< MAX_COLS*2;i++)
+		last_line[i] = 0;
+
+	//move offset back one row
+	offset -= 2*MAX_COLS;
+	return offset;
 }

@@ -3,17 +3,17 @@
 # $@ -- target name
 
 #predefined variables, compiler/linker names etc
-CC=i386-elf-g++
-LD=i386-elf-ld
-GDB=i386-elf-gdb
+CC=/usr/local/i386elfgcc/bin/i386-elf-g++
+LD=/usr/local/i386elfgcc/bin/i386-elf-ld
+GDB=/usr/local/i386elfgcc/bin/i386-elf-gdb
 FLAGS=-ffreestanding -g -fpermissive
 #DEBUG_FLAGS=-g
 
 
 # sources n shit, convert to obj files
-C_SOURCES = $(wildcard kernel/*.c kernel/*.cpp drivers/*.c)
-HEADERS = $(wildcard kernel/*.h driver/*.c)
-OBJ = ${C_SOURCES:.c=.o}
+C_SOURCES = $(wildcard kernel/*.cpp drivers/*.cpp cpu/*.cpp)
+HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h)
+OBJ = ${C_SOURCES:.cpp=.o cpu/interrupt.o}
 
 
 all: os-image.bin
@@ -22,7 +22,7 @@ run : all
 	qemu-system-i386 -fda os-image.bin
 
 
-#build os image --- rember: boot.bin must be first
+#build os image --- repmber: boot.bin must be first
 os-image.bin: boot/boot.bin kernel.bin
 	cat $^ > $@
 
@@ -31,8 +31,19 @@ os-image.bin: boot/boot.bin kernel.bin
 kernel.bin : boot/kernel_entry.o ${OBJ}
 	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary
 
+# need kernel with dbg info for dbg
+kernel.elf : boot/kernel_entry.o ${OBJ}
+	${LD} -o $@ -Ttext 0x1000 $^
+
+# debug
+debug: os-image.bin kernel.elf
+	qemu-system-i386 -s -fda os-image.bin -d guest_erros,int &
+	${GDB} -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
+
+
+
 #build kernel object file
-%.o : %.c ${HEADERS}
+%.o : %.cpp ${HEADERS}
 	${CC} ${FLAGS} -c $< -o $@
 
 #assemble the kernel entry
@@ -41,22 +52,10 @@ kernel.bin : boot/kernel_entry.o ${OBJ}
 
 
 %.bin : %.asm
-	nasm -f bin -I 'boot/' $< -o $@
-
-#debug, also need kernel with dbg info obv
-kernel.elf : boot/kernel_entry.o ${OBJ}
-	${LD} -o $@ -Ttext 0x1000 $^
-
-debug: os-image.bin kernel.elf
-	qemu-system-i386 -s -fda os-image.bin &
-	${GDB} -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
-
+	nasm -f bin -I 'boot/' -I 'cpu/' $< -o $@
 
 # phony clean target
 clean:
 	rm -rf *.bin *.o *.dis os-image.bin *.elf
 	rm -rf kernel/*.o boot/*.bin drivers/*.o kernel/*.elf drivers/*.elf
-
-# disassemble
-kernel.dis : kernel.bin
-	ndisasm -b 32 $< > $@
+	rm -rf cpu/*.o cpu/*.elf
