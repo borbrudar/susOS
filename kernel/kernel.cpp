@@ -14,10 +14,10 @@ extern "C" void kernel_main(){
 }
 
 void user_input(char *input){
-	if(strcmp(input, "EEEENNNNDDDD") == 0){
+	if(strcmp(input, "END") == 0){
 		kprint("Stopping the CPU. Nyan-out!\n");
 		asm volatile("hlt");
-	} else if(strcmp(input, "PPPP") == 0){
+	} else if(strcmp(input, "PAGE") == 0){
 		// test kmalloc
 		uint32_t phys_addr;
 		uint32_t page = kmalloc(1000,1,&phys_addr);
