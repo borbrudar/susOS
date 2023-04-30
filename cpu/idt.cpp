@@ -19,5 +19,5 @@ void set_idt(){
 	idt_reg.base = (uint32_t) &idt;
 	idt_reg.limit = IDT_ENTRIES * sizeof(idt_gate_t) -1;
 	// load idt_reg not idt
-	__asm__ __volatile__("lidt (%0)" : : "r" (&idt_reg));
+	asm volatile("lidt (%0)" : : "r" (&idt_reg));
 }

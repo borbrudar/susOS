@@ -14,10 +14,14 @@ isr_common_stub:
 	mov fs, ax
 	mov gs, ax
 
+	push esp ;registers_t *r
+
 	;2. call C handler
+	cld ; C ocde following sysV abi requires DF to be clear on function entry
 	call isr_handler
 
 	;3. restore state
+	pop eax
 	pop eax
 	mov ds,ax
 	mov es,ax
@@ -25,7 +29,6 @@ isr_common_stub:
 	mov gs,ax
 	popa
 	add esp, 8 ; cleans the error code and isr number
-	sti
 	iret ;pops cs, eip,eflags, ss and esp
 
 ; we dont know which interrupt was called so we have a common handler
@@ -44,16 +47,18 @@ irq_common_stub:
 	mov fs,ax
 	mov gs,ax
 
-	call irq_handler
-	pop ebx ; other diff
+	push esp
+	cld
 
+	call irq_handler 
+	pop ebx ; other diff from isr	
+	pop ebx
 	mov ds,bx
 	mov es,bx
 	mov fs,bx
 	mov gs,bx
 	popa
 	add esp, 8
-	sti
 	iret
 
 ;make isr global
@@ -112,206 +117,170 @@ global irq15
 ;all exceptions bash
 ;divide by zero
 isr0:
-	cli
 	push byte 0
 	push byte 0
 	jmp isr_common_stub
 
 ; debug
 isr1:
-	cli
 	push byte 0
 	push byte 1
 	jmp isr_common_stub
 
 ; non maskable interrupt
 isr2:
-	cli
 	push byte 0
 	push byte 2
 	jmp isr_common_stub
 
 ; int 3 exception
 isr3:
-	cli
 	push byte 0
 	push byte 3
 	jmp isr_common_stub
 
 ;into exception
 isr4:
-	cli
 	push byte 0
 	push byte 4
 	jmp isr_common_stub
 
 ;out of bounds
 isr5:
-	cli
 	push byte 0
 	push byte 5
 	jmp isr_common_stub
 
 ;invalid opcode
 isr6:
-	cli
 	push byte 0
 	push byte 6
 	jmp isr_common_stub
 
 ;coproc not available
 isr7:
-	cli
 	push byte 0
 	push byte 7
 	jmp isr_common_stub
 ; double fault
 isr8:
-	cli
 	push byte 8
 	jmp isr_common_stub
 
 ;coproc segment overrun
 isr9:
-	cli
 	push byte 0
 	push byte 9
 	jmp isr_common_stub
 
 ;bad tss
 isr10:
-	cli
 	push byte 10
 	jmp isr_common_stub
 
 ; segment not present
 isr11:
-	cli
 	push byte 11
 	jmp isr_common_stub
 
 ;stack fault expection
 isr12:
-	cli
 	push byte 12
 	jmp isr_common_stub
 
 ; genreal protection
 isr13:
-	cli
 	push byte 13
 	jmp isr_common_stub
 ;page fault
 isr14:
-	cli
 	push byte 14
 	jmp isr_common_stub
 
 ;reserved
 isr15:
-	cli
 	push byte 0
 	push byte 15
 	jmp isr_common_stub
 ;floating point e
 isr16:
-	cli
 	push byte 0
 	push byte 16
 	jmp isr_common_stub
 ; aligment
 isr17:
-	cli
 	push byte 0
 	push byte 17
 	jmp isr_common_stub
 
 ;machine check
 isr18:
-	cli
 	push byte 0
 	push byte 18
 	jmp isr_common_stub
 ;reserved
 isr19:
-	cli
 	push byte 0
 	push byte 19
 	jmp isr_common_stub
 
 isr20:
-	cli
 	push byte 0
 	push byte 20
 	jmp isr_common_stub
 
 isr21:
-	cli
 	push byte 0
 	push byte 21
 	jmp isr_common_stub
 
 isr22:
-	cli
 	push byte 0
 	push byte 22
 	jmp isr_common_stub
 
 isr23:
-	cli
 	push byte 0
 	push byte 23
 	jmp isr_common_stub
 
 isr24:
-	cli
 	push byte 0
 	push byte 24
 	jmp isr_common_stub
 
 isr25:
-	cli
 	push byte 0
 	push byte 25
 	jmp isr_common_stub
 
 isr26:
-	cli
 	push byte 0
 	push byte 26
 	jmp isr_common_stub
 
 isr27:
-	cli
 	push byte 0
 	push byte 27
 	jmp isr_common_stub
 
 
 isr28:
-	cli
 	push byte 0
 	push byte 28
 	jmp isr_common_stub
 
-
-
 isr29:
-	cli
 	push byte 0
 	push byte 29
 	jmp isr_common_stub
 
-
-isr30:
-	cli
+isr30:	
 	push byte 0
 	push byte 30
 	jmp isr_common_stub
 
-
-isr31:
-	cli
+isr31:	
 	push byte 0
 	push byte 31
 	jmp isr_common_stub
@@ -319,98 +288,83 @@ isr31:
 
 
 ; irq handlers================================================
-irq0:
-	cli
+
+irq0:	
 	push byte 0
 	push byte 32
 	jmp irq_common_stub
 
-irq1:
-	cli
+irq1:	
 	push byte 1
 	push byte 33
 	jmp irq_common_stub
 
 irq2:
-	cli
 	push byte 2
 	push byte 34
 	jmp irq_common_stub
 
 irq3:
-	cli
 	push byte 3
 	push byte 35
 	jmp irq_common_stub
 
-irq4:
-	cli
+irq4:	
 	push byte 4
 	push byte 36
 	jmp irq_common_stub
 
 irq5:
-	cli
 	push byte 5
 	push byte 37
 	jmp irq_common_stub
 
 irq6:
-	cli
 	push byte 6
 	push byte 38
 	jmp irq_common_stub
 
 irq7:
-	cli
 	push byte 7
 	push byte 39
 	jmp irq_common_stub
 
 irq8:
-	cli
 	push byte 8
 	push byte 40
 	jmp irq_common_stub
 
 irq9:
-	cli
 	push byte 9
 	push byte 41
 	jmp irq_common_stub
 
 irq10:
-	cli
 	push byte 10
 	push byte 42
 	jmp irq_common_stub
 
 irq11:
-	cli
 	push byte 11
 	push byte 43
 	jmp irq_common_stub
 
 irq12:
-	cli
 	push byte 12
 	push byte 44
 	jmp irq_common_stub
 
 irq13:
-	cli
 	push byte 13
 	push byte 45
 	jmp irq_common_stub
 
 irq14:
-	cli
 	push byte 14
 	push byte 46
 	jmp irq_common_stub
 
 irq15:
-	cli
 	push byte 15
 	push byte 47
 	jmp irq_common_stub

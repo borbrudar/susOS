@@ -117,13 +117,13 @@ char *exception_messages[] = {
 };
 
 
-extern "C" void isr_handler(registers_t r){
+extern "C" void isr_handler(registers_t *r){
 	kprint("received interrupt: ");
 	char s[3];
-	int_to_ascii(r.int_no,s);
+	int_to_ascii(r->int_no,s);
 	kprint(s);
 	kprint("\n");
-	kprint(exception_messages[r.int_no]);
+	kprint(exception_messages[r->int_no]);
 	kprint("\n");
 }
 
@@ -131,14 +131,14 @@ extern "C" void register_interrupt_handler(uint8_t n,isr_t handler){
 	interrupt_handlers[n] = handler;
 }
 
-extern "C" void irq_handler(registers_t r){
+extern "C" void irq_handler(registers_t *r){
 	// send end of interrupt to pics after each interrupt
 	// or they wont send another one
-	if(r.int_no >= 40) port_byte_out(0xA0, 0x20); //slave
+	if(r->int_no >= 40) port_byte_out(0xA0, 0x20); //slave
 	port_byte_out(0x20,0x20); //master
 
-	if(interrupt_handlers[r.int_no] != 0){
-		isr_t handler = interrupt_handlers[r.int_no];
+	if(interrupt_handlers[r->int_no] != 0){
+		isr_t handler = interrupt_handlers[r->int_no];
 		handler(r);
 	}
 }
@@ -146,8 +146,8 @@ extern "C" void irq_handler(registers_t r){
 void irq_install(){
 	// enable interrupts
 	asm volatile("sti");
-	//irq0 - timer
-	init_timer(50);
 	//irq1 - keyboard
+	init_timer(50);
+	//irq0 - timer
 	init_keyboard();
 }
