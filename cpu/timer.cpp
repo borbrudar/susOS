@@ -9,9 +9,9 @@ u32 tick = 0;
 static void timer_callback(registers_t regs){
 	tick++;
 	//kprint("Tick: ");
-	//char tick_ascii[256];
-	//int_to_ascii(tick,tick_ascii);
-	//kprint(tick_ascii);
+	char tick_ascii[256];
+	int_to_ascii(tick,tick_ascii);
+	kprint(tick_ascii);
 	//kprint("\n");
 }
 
