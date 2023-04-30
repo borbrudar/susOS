@@ -1,5 +1,6 @@
 #include "../drivers/screen.h"
-#include "util.h"
+#include "../libc/mem.h"
+#include "../libc/string.h"
 #include "../cpu/isr.h"
 #include "../cpu/idt.h"
 #include "../cpu/timer.h"
@@ -7,8 +8,16 @@
 
 void main(){
 	isr_install();
+	irq_install();
+	
+}
 
-	asm volatile("sti");
-	init_timer(50);
-	//init_keyboard();
+void user_input(char *input){
+	if(strcmp(input, "EEEENNNNDDDD") == 0){
+		kprint("Stopping the CPU. Nyan-out!\n");
+		asm volatile("hlt");
+	}
+	kprint("You typed: ");
+	kprint(input);
+	kprint("\n>");
 }

@@ -1,5 +1,5 @@
 #include "idt.h"
-#include "../kernel/util.h"
+#include "../libc/mem.h"
 
 //all entries must be defined
 #define IDT_ENTRIES 256

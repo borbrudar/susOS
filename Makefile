@@ -11,8 +11,8 @@ FLAGS=-ffreestanding -g -fpermissive -w
 
 
 # sources n shit, convert to obj files
-C_SOURCES = $(wildcard kernel/*.cpp drivers/*.cpp cpu/*.cpp)
-HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h)
+C_SOURCES = $(wildcard kernel/*.cpp drivers/*.cpp cpu/*.cpp libc/*.cpp)
+HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h libc/*.h)
 OBJ = ${C_SOURCES:.cpp=.o cpu/interrupt.o}
 
 

@@ -1,11 +1,12 @@
 //printchar at col and row or cursor position
-#include "ports.h"
-#include "../kernel/util.h"
+#include "../cpu/ports.h"
+#include "../libc/mem.h"
 #include "screen.h"
+#include "../kernel/kernel.h"
 
 //offset refers to cursor offset
 int print_char(char ch, int row, int col, char attribute);
-int get_screen_offset(int row, int col);
+int get_offset(int row, int col);
 int get_cursor();
 void set_cursor(int offset);
 int get_offset_row(int offset);
@@ -20,7 +21,7 @@ void kprint_at(char*message, int row, int col);
 
 void kprint_at(char *message, int row, int col){
 	int offset;
-	if(col >=0 && row>=0) offset= get_screen_offset(row,col);
+	if(col >=0 && row>=0) offset= get_offset(row,col);
 	else{
 		offset = get_cursor();
 		row = get_offset_row(offset);
@@ -39,6 +40,12 @@ void kprint(char *message){
 	kprint_at(message,-1,-1);
 }
 
+void kprint_backspace(){
+	int offset = get_cursor()-2;
+	int row = get_offset_row(offset);
+	int col = get_offset_col(offset);
+	print_char(0x88,col, row,WHITE_ON_BLACK);
+}
 
 
 // ----------------------------------------------------
@@ -54,18 +61,18 @@ int print_char(char ch, int row, int col, char attribute){
 	if(col >= MAX_COLS || row >= MAX_ROWS){
 		vidmem[2*(MAX_COLS)*(MAX_ROWS)-2] = 'E';
 		vidmem[2*(MAX_COLS)*(MAX_ROWS)-1] = RED_ON_WHITE;
-		return get_screen_offset(row,col);
+		return get_offset(row,col);
 	}
 
 	//calculate the offset
 	int offset;
-	if(col >= 0 && row >= 0) offset = get_screen_offset(row,col);
+	if(col >= 0 && row >= 0) offset = get_offset(row,col);
 	else offset = get_cursor();
 
 	// if newline go to newline
 	if(ch == '\n'){
 		row = get_offset_row(offset);
-		offset = get_screen_offset(row+1,col);
+		offset = get_offset(row+1,0);
 	}else{
 		vidmem[offset] = ch;
 		vidmem[offset+1] = attribute;
@@ -78,7 +85,7 @@ int print_char(char ch, int row, int col, char attribute){
 }
 
 //basic 2d matrix lol
-int get_screen_offset(int row, int col){
+int get_offset(int row, int col){
 	return 2*(row * MAX_COLS + col);
 }
 int get_offset_row(int offset){
@@ -117,7 +124,7 @@ void clear_screen(){
 		vga[i*2] = ' ';
 		vga[i*2+1] = WHITE_ON_BLACK;
 	}
-	set_cursor(get_screen_offset(0,0));
+	set_cursor(get_offset(0,0));
 }
 
 int handle_scrolling(int offset){
@@ -125,13 +132,13 @@ int handle_scrolling(int offset){
 
 	// shuffle rows back
 	for(int i =1;i<MAX_ROWS;i++){
-		memory_copy(get_screen_offset(i, 0) + VIDEO_ADDRESS,
-		get_screen_offset(i-1, 0) + VIDEO_ADDRESS,
+		memory_copy(get_offset(i, 0) + VIDEO_ADDRESS,
+		get_offset(i-1, 0) + VIDEO_ADDRESS,
 		MAX_COLS*2);
 	}
 
 	// set the last line to blank
-	char *last_line = get_screen_offset(MAX_ROWS-1,0) + VIDEO_ADDRESS;
+	char *last_line = get_offset(MAX_ROWS-1,0) + VIDEO_ADDRESS;
 	for(int i =0;i< MAX_COLS*2;i++)
 		last_line[i] = 0;
 

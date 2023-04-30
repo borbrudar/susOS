@@ -1,8 +1,10 @@
 #include "isr.h"
 #include "idt.h"
 #include "../drivers/screen.h"
-#include "../kernel/util.h"
-#include "../drivers/ports.h"
+#include "../libc/string.h"
+#include "../cpu/ports.h"
+#include "timer.h"
+#include "../drivers/keyboard.h"
 
 isr_t interrupt_handlers[256];
 
@@ -139,4 +141,13 @@ extern "C" void irq_handler(registers_t r){
 		isr_t handler = interrupt_handlers[r.int_no];
 		handler(r);
 	}
+}
+
+void irq_install(){
+	// enable interrupts
+	asm volatile("sti");
+	//irq0 - timer
+	init_timer(50);
+	//irq1 - keyboard
+	init_keyboard();
 }
