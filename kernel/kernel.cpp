@@ -19,8 +19,8 @@ void user_input(char *input){
 		asm volatile("hlt");
 	} else if(strcmp(input, "PPPP") == 0){
 		// test kmalloc
-		u32 phys_addr;
-		u32 page = kmalloc(1000,1,&phys_addr);
+		uint32_t phys_addr;
+		uint32_t page = kmalloc(1000,1,&phys_addr);
 		char page_str[16] = "";
 		hex_to_ascii(page,page_str);
 		char phys_str[16] = "";

@@ -9,3 +9,5 @@ drivers/*.o
 boot/*.o
 boot/*.bin
 *.dis
+libc/*.o
+cpu/*.0

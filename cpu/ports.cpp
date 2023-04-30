@@ -1,26 +1,26 @@
 #include "ports.h"
 
-u8 port_byte_in(u16 port){
+uint8_t port_byte_in(uint16_t port){
 	// reads a byte from the specified port
 	// =a (result) means: put al register in var result when done
 	// d (port) means: load edx with port
-	u8 result;
+	uint8_t result;
 	__asm__("in %%dx, %%al" : "=a" (result) : "d" (port));
 	return result;
 }
 
-void port_byte_out(u16 port, u8 data){
+void port_byte_out(uint16_t port, uint8_t data){
 	// a (data) : load eax with data
 	// d (port) : load edx with port
 	__asm__ __volatile__("out %%al, %%dx" : : "a" (data), "d" (port));
 }
 
-u16 port_word_in(u16 port){
-	u16 result;
+uint16_t port_word_in(uint16_t port){
+	uint16_t result;
 	__asm__("in %%dx, %%ax" : "=a" (result) : "d" (port));
 	return result;
 }
 
-void port_word_out(u16 port, u16 data){
+void port_word_out(uint16_t port, uint16_t data){
 	__asm__ __volatile__("out %%ax, %%dx" : :"a" (data), "d" (port));
 }
