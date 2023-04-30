@@ -6,8 +6,8 @@
 CC=/usr/local/i386elfgcc/bin/i386-elf-g++
 LD=/usr/local/i386elfgcc/bin/i386-elf-ld
 GDB=/usr/local/i386elfgcc/bin/i386-elf-gdb
-FLAGS=-ffreestanding -g -fpermissive -w
-#DEBUG_FLAGS=-g
+FLAGS=-ffreestanding -g -fpermissive -w 
+#DEBUG_FLAGS=-g -fpermissive -w
 
 
 # sources n shit, convert to obj files

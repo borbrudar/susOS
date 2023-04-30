@@ -5,8 +5,9 @@
 #include "../cpu/idt.h"
 #include "../cpu/timer.h"
 #include "../drivers/keyboard.h"
+#include <stdint.h>
 
-void main(){
+extern "C" void kernel_main(){
 	isr_install();
 	irq_install();
 	//kprint(">");
