@@ -17,7 +17,7 @@ isr_common_stub:
 	push esp ;registers_t *r
 
 	;2. call C handler
-	cld ; C ocde following sysV abi requires DF to be clear on function entry
+	cld ; C code following sysV abi requires DF to be clear on function entry
 	call isr_handler
 
 	;3. restore state
@@ -39,8 +39,10 @@ isr_common_stub:
 ;common irq code. identical to isr except for function call and 'pop ebx'
 irq_common_stub:
 	pusha
+
 	mov ax,ds
 	push eax
+
 	mov ax,0x10
 	mov ds,ax
 	mov es,ax
@@ -209,7 +211,6 @@ isr16:
 	jmp isr_common_stub
 ; aligment
 isr17:
-	push byte 0
 	push byte 17
 	jmp isr_common_stub
 
@@ -230,7 +231,6 @@ isr20:
 	jmp isr_common_stub
 
 isr21:
-	push byte 0
 	push byte 21
 	jmp isr_common_stub
 
@@ -271,12 +271,10 @@ isr28:
 	jmp isr_common_stub
 
 isr29:
-	push byte 0
 	push byte 29
 	jmp isr_common_stub
 
 isr30:	
-	push byte 0
 	push byte 30
 	jmp isr_common_stub
 

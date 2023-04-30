@@ -8,15 +8,16 @@ uint32_t tick = 0;
 
 static void timer_callback(registers_t *regs){
 	tick++;
-	kprint("Tick: ");
+/*	kprint("Tick: ");
 	char tick_ascii[256];
 	int_to_ascii(tick,tick_ascii);
 	kprint(tick_ascii);
 	kprint("\n");
+	*/
 }
 
 void init_timer(uint32_t freq){
-	//register handler ig?
+	//register handler 
 	register_interrupt_handler(IRQ0, timer_callback);
 
 	//get the PIT value, hardware clock is 1193180 Hz
@@ -28,5 +29,5 @@ void init_timer(uint32_t freq){
 	port_byte_out(0x40,low);
 	port_byte_out(0x40,high);
 
-	port_byte_out(0x20,0x20);
+	//port_byte_out(0x20,0x20);
 }

@@ -44,16 +44,16 @@ extern "C" void isr_install(){
 	set_idt_gate(31, (uint32_t)isr31);
 
 	//remap the PIC
-	port_byte_out(0x20,0x11);
-	port_byte_out(0xA0,0x11);
-	port_byte_out(0x21,0x20);
-	port_byte_out(0xA1,0x28);
-	port_byte_out(0x21,0x04);
-	port_byte_out(0xA1,0x02);
-	port_byte_out(0x21,0x01);
-	port_byte_out(0xA1,0x01);
-	port_byte_out(0x21,0x0);
-	port_byte_out(0xA1,0x0);
+	port_byte_out(0x20, 0x11);
+    port_byte_out(0xA0, 0x11);
+    port_byte_out(0x21, 0x20);
+    port_byte_out(0xA1, 0x28);
+    port_byte_out(0x21, 0x04);
+    port_byte_out(0xA1, 0x02);
+    port_byte_out(0x21, 0x01);
+    port_byte_out(0xA1, 0x01);
+    port_byte_out(0x21, 0x0);
+    port_byte_out(0xA1, 0x0); 
 
 	//install irqs
 	set_idt_gate(32, (uint32_t)irq0);
@@ -117,7 +117,7 @@ char *exception_messages[] = {
 };
 
 
-extern "C" void isr_handler(registers_t *r){
+void isr_handler(registers_t *r){
 	kprint("received interrupt: ");
 	char s[3];
 	int_to_ascii(r->int_no,s);
@@ -127,13 +127,23 @@ extern "C" void isr_handler(registers_t *r){
 	kprint("\n");
 }
 
-extern "C" void register_interrupt_handler(uint8_t n,isr_t handler){
+void register_interrupt_handler(uint8_t n,isr_t handler){
 	interrupt_handlers[n] = handler;
 }
 
-extern "C" void irq_handler(registers_t *r){
+void irq_handler(registers_t *r){
 	// send end of interrupt to pics after each interrupt
 	// or they wont send another one
+	//kprint("recevied irq\n");
+	if(r->int_no > 33){
+		kprint("error: ");
+		char st[3];
+		int_to_ascii(r->int_no,st);
+		kprint(st);
+		kprint("\n");
+		return;
+	}
+
 	if(r->int_no >= 40) port_byte_out(0xA0, 0x20); //slave
 	port_byte_out(0x20,0x20); //master
 
@@ -146,8 +156,8 @@ extern "C" void irq_handler(registers_t *r){
 void irq_install(){
 	// enable interrupts
 	asm volatile("sti");
-	//irq1 - keyboard
-	init_timer(50);
 	//irq0 - timer
+	init_timer(50);
+	//irq1 - keyboard
 	init_keyboard();
 }

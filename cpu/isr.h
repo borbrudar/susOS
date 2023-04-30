@@ -75,7 +75,7 @@ extern "C" void irq15();
 //registers struct for some reason idfk
 typedef struct{
 	uint32_t ds; // data segment
-	uint32_t edi, esi, ebp, useless, edx, ecx, eax; // pushed by pusha (useless is esp kinda)
+	uint32_t edi, esi, ebp, useless, ebx, edx, ecx, eax; // pushed by pusha (useless is esp kinda)
 	uint32_t int_no, err_code; // self explanatory
 	uint32_t eip, cs, eflags, esp, ss; // pushed by cpu automatically
 } registers_t;
@@ -86,3 +86,4 @@ extern "C" void irq_install();
 
 typedef void(*isr_t)(registers_t*);
 extern "C" void register_interrupt_handler(uint8_t n,isr_t handler);
+extern "C" void irq_handler(registers_t *r);

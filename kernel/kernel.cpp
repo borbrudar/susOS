@@ -8,9 +8,10 @@
 #include <stdint.h>
 
 extern "C" void kernel_main(){
+	clear_screen();
+	kprint(">");
 	isr_install();
 	irq_install();
-	//kprint(">");
 }
 
 void user_input(char *input){
