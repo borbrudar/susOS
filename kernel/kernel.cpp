@@ -6,12 +6,21 @@
 #include "../cpu/timer.h"
 #include "../drivers/keyboard.h"
 #include <stdint.h>
+#include "../libc/macros.h"
+#include "../cpu/paging.h"
 
 extern "C" void kernel_main(){
 	clear_screen();
 	kprint(">");
+	//PANIC("error lmao",__LINE__,__FILE__);
 	isr_install();
 	irq_install();
+	init_paging();
+	/*
+	kprint("Enabled paging\n");
+	uint32_t *ptr = (uint32_t*) 0xA0000000;
+	uint32_t *fault = *ptr;
+	*/
 }
 
 void user_input(char *input){
@@ -21,7 +30,7 @@ void user_input(char *input){
 	} else if(strcmp(input, "PAGE") == 0){
 		// test kmalloc
 		uint32_t phys_addr;
-		uint32_t page = kmalloc(1000,1,&phys_addr);
+		uint32_t page = kmalloc_int(1000,1,&phys_addr);
 		char page_str[16] = "";
 		hex_to_ascii(page,page_str);
 		char phys_str[16] = "";
@@ -32,7 +41,7 @@ void user_input(char *input){
 		kprint(", physical address: ");
 		kprint(phys_str);
 		kprint("\n");
-	}
+	}	
 	kprint("You typed: ");
 	kprint(input);
 	kprint("\n>");

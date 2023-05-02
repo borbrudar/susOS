@@ -25,8 +25,8 @@ run : all
 #build os image --- repmber: boot.bin must be first
 os-image.bin: boot/boot.bin kernel.bin
 	cat $^ > $@
-	truncate os-image.bin -s +30KB
-	truncate os-image.bin --size 30KB
+# truncate os-image.bin -s +30KB
+# truncate os-image.bin --size 30KB
 
 
 #build kernel lib
