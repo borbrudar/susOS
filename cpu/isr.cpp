@@ -8,8 +8,15 @@
 
 isr_t interrupt_handlers[256];
 
+//typedef void (*callback)(registers_t);
+
+void (*callback[256])(registers_t*);
+
 //no for loop since we need function names address
 extern "C" void isr_install(){
+	//init interrupt handler to nothing
+	for(int i =0;i < 256;i++) callback[i] = nullptr;
+
 	set_idt_gate(0, (uint32_t)isr0);
 	set_idt_gate(1, (uint32_t)isr1);
 	set_idt_gate(2, (uint32_t)isr2);
@@ -125,11 +132,19 @@ void isr_handler(registers_t *r){
 	kprint("\n");
 	kprint(exception_messages[r->int_no]);
 	kprint("\n");
+	if(callback[r->int_no] != nullptr) callback[r->int_no](r); 
+	asm ("hlt");
 }
 
+
+void register_interrupt_handler(uint8_t n, void(*ptr)(registers_t*)){
+	callback[n] = ptr;
+}
+/*
 void register_interrupt_handler(uint8_t n,isr_t handler){
 	interrupt_handlers[n] = handler;
 }
+*/
 
 void irq_handler(registers_t *r){
 	// send end of interrupt to pics after each interrupt

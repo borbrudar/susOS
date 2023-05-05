@@ -141,16 +141,16 @@ page_t *get_page(uint32_t address, int make, page_directory_t *dir){
 }
 
 // page fault handler
-void page_fault(registers_t regs){
+void page_fault(registers_t *regs){
     uint32_t faulting_address;
     asm ("mov %%cr2, %0" : "=r" (faulting_address));
 
     // get detailed error code
-    int present = !(regs.err_code & 0x1); // page not present
-    int rw = regs.err_code & 0x02; // write operation
-    int us = regs.err_code & 0x4; // was proccesor in user mode?
-    int reserved = regs.err_code & 0x8; // overwritten cpu-reversed bits of page entry?
-    int id = regs.err_code & 0x10; // caused by instruction fetch?
+    int present = !(regs->err_code & 0x1); // page not present
+    int rw = regs->err_code & 0x02; // write operation
+    int us = regs->err_code & 0x4; // was proccesor in user mode?
+    int reserved = regs->err_code & 0x8; // overwritten cpu-reversed bits of page entry?
+    int id = regs->err_code & 0x10; // caused by instruction fetch?
 
     kprint("Page fautl! ( ");
     if(present) kprint("present ");
