@@ -84,6 +84,6 @@ extern "C" void isr_install();
 extern "C" void isr_handler(registers_t *r);
 extern "C" void irq_install();
 
-typedef void(*isr_t)(registers_t*);
-extern "C" void register_interrupt_handler(uint8_t n,isr_t handler);
+typedef void(*interrupt_callback)(registers_t*);
+extern "C" void register_interrupt_handler(uint8_t n,interrupt_callback cb);
 extern "C" void irq_handler(registers_t *r);

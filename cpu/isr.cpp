@@ -6,16 +6,13 @@
 #include "timer.h"
 #include "../drivers/keyboard.h"
 
-isr_t interrupt_handlers[256];
 
-//typedef void (*callback)(registers_t);
-
-void (*callback[256])(registers_t*);
+interrupt_callback interrupt_handlers[256];
 
 //no for loop since we need function names address
 extern "C" void isr_install(){
 	//init interrupt handler to nothing
-	for(int i =0;i < 256;i++) callback[i] = nullptr;
+	for(int i =0;i < 256;i++) interrupt_handlers[i] = nullptr;
 
 	set_idt_gate(0, (uint32_t)isr0);
 	set_idt_gate(1, (uint32_t)isr1);
@@ -125,32 +122,30 @@ char *exception_messages[] = {
 
 
 void isr_handler(registers_t *r){
-	kprint("received interrupt: ");
+	kprint("Received interrupt: ");
 	char s[3];
 	int_to_ascii(r->int_no,s);
 	kprint(s);
 	kprint("\n");
 	kprint(exception_messages[r->int_no]);
 	kprint("\n");
-	if(callback[r->int_no] != nullptr) callback[r->int_no](r); 
+	if(interrupt_handlers[r->int_no] != nullptr) {
+		kprint("Handling interrupt:\n");
+		interrupt_handlers[r->int_no](r); 
+	}
 	asm ("hlt");
 }
 
 
-void register_interrupt_handler(uint8_t n, void(*ptr)(registers_t*)){
-	callback[n] = ptr;
+void register_interrupt_handler(uint8_t n, interrupt_callback cb){
+	interrupt_handlers[n] = cb;
 }
-/*
-void register_interrupt_handler(uint8_t n,isr_t handler){
-	interrupt_handlers[n] = handler;
-}
-*/
 
 void irq_handler(registers_t *r){
 	// send end of interrupt to pics after each interrupt
 	// or they wont send another one
 	//kprint("recevied irq\n");
-	if(r->int_no > 33){
+	if(r->int_no > 33){ //this is kinda legacy debug code ig
 		kprint("error: ");
 		char st[3];
 		int_to_ascii(r->int_no,st);
@@ -163,7 +158,7 @@ void irq_handler(registers_t *r){
 	port_byte_out(0x20,0x20); //master
 
 	if(interrupt_handlers[r->int_no] != 0){
-		isr_t handler = interrupt_handlers[r->int_no];
+		interrupt_callback handler = interrupt_handlers[r->int_no];
 		handler(r);
 	}
 }
