@@ -31,7 +31,7 @@ os-image.bin: boot/boot.bin kernel.bin
 
 #build kernel lib
 kernel.bin : boot/kernel_entry.o ${OBJ}
-	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary
+	${LD} -Tlink.ld -o $@ -Ttext 0x1000 $^ --oformat binary
 
 # need kernel with dbg info for dbg
 kernel.elf : boot/kernel_entry.o ${OBJ}

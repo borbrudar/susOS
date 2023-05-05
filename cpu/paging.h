@@ -16,15 +16,15 @@ typedef struct page{
 } page_t;
 
 typedef struct page_table{
-    page_t pages[1024];
+    page_t pages[1024]  __attribute__((aligned(4096)));
 } page_table_t;
 
 typedef struct page_directory{
     // ptrs to page tables
-    page_table_t *tables[1024];
+    page_table_t *tables[1024]  __attribute__((aligned(4096)));;
     // ptrs to page tables, but their physical address
     // for loading into CR3 register
-    uint32_t tablesPhysical[1024];
+    uint32_t tablesPhysical[1024]  __attribute__((aligned(4096)));;
     
     //physical address of tablesPhysical
     //important for kernel heap and virtual memory

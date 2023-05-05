@@ -11,16 +11,16 @@
 
 extern "C" void kernel_main(){
 	clear_screen();
-	kprint(">");
-	//PANIC("error lmao",__LINE__,__FILE__);
+	//kprint(">");
 	isr_install();
 	irq_install();
 	init_paging();
-	/*
+	
 	kprint("Enabled paging\n");
+	//PANIC("success");
 	uint32_t *ptr = (uint32_t*) 0xA0000000;
 	uint32_t *fault = *ptr;
-	*/
+	PANIC("lmao\n");
 }
 
 void user_input(char *input){

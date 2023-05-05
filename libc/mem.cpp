@@ -1,4 +1,6 @@
 #include "mem.h"
+#include "../drivers/screen.h"
+#include "../libc/string.h"
 
 void memory_copy(char *source, char *dest, int no_bytes){
 	for(int i = 0;i < no_bytes;i++){
@@ -6,11 +8,10 @@ void memory_copy(char *source, char *dest, int no_bytes){
 	}
 }
 
-void memory_set(uint8_t *dest,uint8_t val, uint32_t len){
+void memory_set(void *dest,uint8_t val, uint32_t len){
 	uint8_t* temp=(uint8_t*) dest;
 	for(; len != 0; len--) *temp++ = val;
 }
-
 
 //libc functions
 void *memmove(void *dstptr,const void*srcptr, size_t size){
@@ -36,15 +37,19 @@ int memcmp(const void*aptr, const void*bptr, size_t size){
     return 0;
 }
 
+/* i need to use the shitty one for some reason
 void *memset(void *bufptr, int value ,size_t size){
     uint8_t* buf = (uint8_t*) bufptr;
     for(size_t i = 0;i < size;i++)
         buf[i] = (uint8_t)value;
     return bufptr;
 }
+*/
 
-//should be calculated at link time, hardcore for now
-uint32_t free_mem_addr = 0x10000;
+//defined in the linker script
+extern uint32_t end;
+uint32_t free_mem_addr = (uint32_t)&end;
+
 //ptr to free memory that keeps growing
 uint32_t kmalloc_int(size_t size, int align, uint32_t *phys_addr){
     // pages are align to 4k or 0x1000

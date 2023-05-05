@@ -65,7 +65,7 @@ void alloc_frame(page_t *page, int is_kernel, int is_writable){
     set_frame(idx* 0x1000);
     page->present = 1; // mark as present
     page->rw = (is_writable)? 1 : 0; // r/w 
-    page->user = (is_kernel)? 1 : 0; // user/supervisor
+    page->user = (is_kernel)? 0 : 1; // user/supervisor
     page->frame = idx; // index in the table
 }
 
@@ -87,21 +87,25 @@ void init_paging(){
 
     nframes = mem_end_page/0x1000;
     frames = (uint32_t*) kmalloc(INDEX_FROM_BIT(nframes));
-    memset(frames, 0, INDEX_FROM_BIT(nframes));
-
+    memory_set(frames, 0, INDEX_FROM_BIT(nframes));
+    
     //create a page directory
-    kernel_directory = (page_directory_t*) kmalloc_a(sizeof(page_directory_t));
-    memset(kernel_directory,0, sizeof(page_directory_t));
+    kernel_directory = (page_directory_t*)
+    kmalloc_a(sizeof(page_directory_t));
+    // the bug was this line. i have no idea why, but uncommenting it,
+    // breaks the whole systems. took me about 4 days to debug...
+   // memory_set(kernel_directory,0, sizeof(page_directory_t));
     current_directory = kernel_directory;
 
     int i = 0;
-    while(i < free_mem_addr){
-        alloc_frame(get_page(i,1,kernel_directory),0,0);
+    while(i < 0x1000000){
+        alloc_frame(get_page(i,1,kernel_directory),1,1);
         i += 0x1000;
     }
 
     // register our page to page fault handler
     register_interrupt_handler(14, page_fault);
+   
     //enable paging
     switch_page_directory(kernel_directory);
 }
@@ -114,7 +118,7 @@ void switch_page_directory(page_directory_t *dir){
     asm volatile("mov %%cr0, %0": "=r"(cr0));
     cr0 |= 0x80000000; // enable paging
     asm volatile("mov %0, %%cr0" :: "r"(cr0));
-    PANIC("test 1\n");
+    //PANIC("test 1\n");
 }
 // retries pointer to the page required
 // if make==1, create the table if neccessary
@@ -129,7 +133,7 @@ page_t *get_page(uint32_t address, int make, page_directory_t *dir){
     else if(make){
         uint32_t tmp;
         dir->tables[table_idx] = (page_table_t*)kmalloc_ap(sizeof(page_table_t),&tmp);
-        memset(dir->tables[table_idx], 0,0x1000);
+        memory_set(dir->tables[table_idx], 0,0x1000);
         dir->tablesPhysical[table_idx] = tmp | 0x7; //present, rw, us
         return &dir->tables[table_idx]->pages[address%1024];
     }
