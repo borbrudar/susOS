@@ -15,6 +15,7 @@
 
 //api functions
 void clear_screen();
-void kprint_at(char *message, int row, int col);
-void kprint(char *message);
+void kprint_at(const char *message, int row, int col);
+void kprint(const char *message);
+void kprint(int n);
 void kprint_backspace();

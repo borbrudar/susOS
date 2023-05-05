@@ -3,6 +3,9 @@
 #include "../drivers/screen.h"
 #include "../libc/string.h"
 #include "../libc/macros.h"
+#include "kheap.h"
+
+extern heap_t *kheap;
 
 //kernel's page directory
 page_directory_t *kernel_directory = 0;
@@ -14,7 +17,8 @@ page_directory_t *current_directory = 0;
 uint32_t *frames;
 uint32_t nframes;
 
-extern uint32_t free_mem_addr; // defined in mem.cpp
+// defined in kheap.cpp
+extern uint32_t placement_address; 
 
 #define INDEX_FROM_BIT(a) (a/32)
 #define OFFSET_FROM_BIT(a) (a%32)
@@ -87,27 +91,39 @@ void init_paging(){
 
     nframes = mem_end_page/0x1000;
     frames = (uint32_t*) kmalloc(INDEX_FROM_BIT(nframes));
-    memory_set(frames, 0, INDEX_FROM_BIT(nframes));
+    memset(frames, 0, INDEX_FROM_BIT(nframes));
     
     //create a page directory
     kernel_directory = (page_directory_t*)
     kmalloc_a(sizeof(page_directory_t));
     // the bug was this line. i have no idea why, but uncommenting it,
     // breaks the whole systems. took me about 4 days to debug...
-   // memory_set(kernel_directory,0, sizeof(page_directory_t));
+   // memset(kernel_directory,0, sizeof(page_directory_t));
     current_directory = kernel_directory;
 
+
     int i = 0;
-    while(i < 0x1000000){
+    for (i = KHEAP_START; i < KHEAP_START+KHEAP_INITIAL_SIZE; i += 0x1000)
+       get_page(i, 1, kernel_directory); 
+
+    i = 0;
+    while(i < 0x10000000){
         alloc_frame(get_page(i,1,kernel_directory),1,1);
         i += 0x1000;
     }
+
+    // allocate pages for the heap
+    for(i = KHEAP_START; i < KHEAP_START+KHEAP_INITIAL_SIZE; i+= 0x1000)
+        alloc_frame(get_page(i,1,kernel_directory), 0,0);
 
     // register our page to page fault handler
     register_interrupt_handler(14, page_fault);
    
     //enable paging
     switch_page_directory(kernel_directory);
+
+    //init kernel heap
+    kheap = create_heap(KHEAP_START , KHEAP_START+KHEAP_INITIAL_SIZE, 0xCFFFF000,0,0);
 }
 
 // loads specified page directory into cr3
@@ -133,7 +149,7 @@ page_t *get_page(uint32_t address, int make, page_directory_t *dir){
     else if(make){
         uint32_t tmp;
         dir->tables[table_idx] = (page_table_t*)kmalloc_ap(sizeof(page_table_t),&tmp);
-        memory_set(dir->tables[table_idx], 0,0x1000);
+        memset(dir->tables[table_idx], 0,0x1000);
         dir->tablesPhysical[table_idx] = tmp | 0x7; //present, rw, us
         return &dir->tables[table_idx]->pages[address%1024];
     }

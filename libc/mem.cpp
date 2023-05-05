@@ -7,11 +7,14 @@ void memory_copy(char *source, char *dest, int no_bytes){
 		*(dest+i) = *(source+i);
 	}
 }
+/*
+legacy
 
 void memory_set(void *dest,uint8_t val, uint32_t len){
 	uint8_t* temp=(uint8_t*) dest;
 	for(; len != 0; len--) *temp++ = val;
 }
+*/
 
 //libc functions
 void *memmove(void *dstptr,const void*srcptr, size_t size){
@@ -37,47 +40,10 @@ int memcmp(const void*aptr, const void*bptr, size_t size){
     return 0;
 }
 
-/* i need to use the shitty one for some reason
+// i need to use the shitty one for some reason
 void *memset(void *bufptr, int value ,size_t size){
     uint8_t* buf = (uint8_t*) bufptr;
     for(size_t i = 0;i < size;i++)
         buf[i] = (uint8_t)value;
     return bufptr;
-}
-*/
-
-//defined in the linker script
-extern uint32_t end;
-uint32_t free_mem_addr = (uint32_t)&end;
-
-//ptr to free memory that keeps growing
-uint32_t kmalloc_int(size_t size, int align, uint32_t *phys_addr){
-    // pages are align to 4k or 0x1000
-   if(align == 1 && (free_mem_addr & 0x00000FFF)){
-        free_mem_addr &= 0xFFFFF000;
-        free_mem_addr += 0x1000;
-    }
-    // save the physical address
-    if(phys_addr) *phys_addr = free_mem_addr;
-
-    uint32_t ret = free_mem_addr;
-    free_mem_addr += size; // inc the pointer
-    return ret;
-}
-
-// page aligned
-uint32_t kmalloc_a(size_t size){
-    return kmalloc_int(size, 1, 0);
-} 
-// returns a physical address
-uint32_t kmalloc_p(size_t size,uint32_t *phys){
-    return kmalloc_int(size, 0, phys);
-} 
-// page aligned and physical address
-uint32_t kmalloc_ap(size_t size, uint32_t *phys){
-    return kmalloc_int(size,1,phys);
-}
-//vanilla
-uint32_t kmalloc(size_t size){
-    return kmalloc_int(size,0,0);
 }

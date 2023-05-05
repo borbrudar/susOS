@@ -3,6 +3,7 @@
 #include "../libc/mem.h"
 #include "screen.h"
 #include "../kernel/kernel.h"
+#include "../libc/string.h"
 
 //offset refers to cursor offset
 int print_char(char ch, int row, int col, char attribute);
@@ -14,12 +15,13 @@ int get_offset_col(int offset);
 int handle_scrolling(int offset);
 
 void clear_screen();
-void kprint(char*message);
-void kprint_at(char*message, int row, int col);
+void kprint(const char*message);
+void kprint(int n);
+void kprint_at(const char*message, int row, int col);
 
 
 
-void kprint_at(char *message, int row, int col){
+void kprint_at(const char *message, int row, int col){
 	int offset;
 	if(col >=0 && row>=0) offset= get_offset(row,col);
 	else{
@@ -36,8 +38,13 @@ void kprint_at(char *message, int row, int col){
 	}
 }
 
-void kprint(char *message){
+void kprint(const char *message){
 	kprint_at(message,-1,-1);
+}
+
+void kprint(int n){
+	char s[10]; int_to_ascii(n,s);
+	kprint(s);
 }
 
 void kprint_backspace(){

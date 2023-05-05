@@ -11,3 +11,8 @@ boot/*.bin
 *.dis
 libc/*.o
 cpu/*.0
+*.bin
+*.elf
+os-image.bin
+kernel.bin
+kernel.elf
