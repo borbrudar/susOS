@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../libc/macros.h"
-#include "../libc/mem.h"
+#include "macros.h"
+#include "mem.h"
 #include "isr.h"
 
 

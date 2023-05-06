@@ -1,7 +1,7 @@
 #include "ordered_array.h"
 #include "mem.h"
 #include "macros.h"
-#include "../cpu/kheap.h"
+#include "kheap.h"
 
 int8_t standard_less_predicate(type_t a,type_t b){
     return (a<b) ? 1 : 0;

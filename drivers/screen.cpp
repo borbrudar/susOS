@@ -1,9 +1,9 @@
 //printchar at col and row or cursor position
-#include "../cpu/ports.h"
-#include "../libc/mem.h"
+#include "ports.h"
+#include "mem.h"
 #include "screen.h"
-#include "../kernel/kernel.h"
-#include "../libc/string.h"
+#include "kernel.h"
+#include "string.h"
 
 //offset refers to cursor offset
 int print_char(char ch, int row, int col, char attribute);
@@ -140,7 +140,7 @@ int handle_scrolling(int offset){
 
 	// shuffle rows back
 	for(int i =1;i<MAX_ROWS;i++){
-		memory_copy(get_offset(i, 0) + VIDEO_ADDRESS,
+		memcpy(get_offset(i, 0) + VIDEO_ADDRESS,
 		get_offset(i-1, 0) + VIDEO_ADDRESS,
 		MAX_COLS*2);
 	}

@@ -21,3 +21,8 @@ cmpsd             ;compare addresses to see if the're equivalent.
 popad
 jne A20_on        ;if not equivalent , A20 line is set.
 ret               ;if equivalent , the A20 line is cleared.
+
+A20_on:
+	mov ebx, MSG_A20
+	call print32
+	jmp $

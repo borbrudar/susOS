@@ -1,22 +1,15 @@
 #include "mem.h"
-#include "../drivers/screen.h"
-#include "../libc/string.h"
+#include "screen.h"
+#include "string.h"
 
-void memory_copy(char *source, char *dest, int no_bytes){
-	for(int i = 0;i < no_bytes;i++){
-		*(dest+i) = *(source+i);
-	}
+void* memcpy(void* dstptr, const void* srcptr, size_t size) {
+	unsigned char* dst = (unsigned char*) dstptr;
+	const unsigned char* src = (const unsigned char*) srcptr;
+	for (size_t i = 0; i < size; i++)
+		dst[i] = src[i];
+	return dstptr;
 }
-/*
-legacy
 
-void memory_set(void *dest,uint8_t val, uint32_t len){
-	uint8_t* temp=(uint8_t*) dest;
-	for(; len != 0; len--) *temp++ = val;
-}
-*/
-
-//libc functions
 void *memmove(void *dstptr,const void*srcptr, size_t size){
     uint8_t *dst = (uint8_t*)dstptr;
     const uint8_t* src = (const uint8_t*) srcptr;

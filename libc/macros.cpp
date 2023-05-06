@@ -1,5 +1,5 @@
 #include "macros.h"
-#include "../drivers/screen.h"
+#include "screen.h"
 #include "string.h"
 
 void panic(const char *msg, int line, const char* file) {

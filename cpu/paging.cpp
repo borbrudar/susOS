@@ -1,8 +1,8 @@
 #include "paging.h"
-#include "../libc/mem.h"
-#include "../drivers/screen.h"
-#include "../libc/string.h"
-#include "../libc/macros.h"
+#include "mem.h"
+#include "screen.h"
+#include "string.h"
+#include "macros.h"
 #include "kheap.h"
 
 extern heap_t *kheap;

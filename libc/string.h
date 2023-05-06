@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../cpu/types.h"
+#include "types.h"
 
 
 void int_to_ascii(int n, char str[]);

@@ -1,5 +1,5 @@
 #pragma once
 
-#include "../cpu/types.h"
+#include "types.h"
 
 void init_keyboard();

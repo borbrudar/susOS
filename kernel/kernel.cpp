@@ -1,15 +1,15 @@
-#include "../drivers/screen.h"
-#include "../libc/mem.h"
-#include "../libc/string.h"
-#include "../cpu/isr.h"
-#include "../cpu/idt.h"
-#include "../cpu/timer.h"
-#include "../drivers/keyboard.h"
+#include "screen.h"
+#include "mem.h"
+#include "string.h"
+#include "isr.h"
+#include "idt.h"
+#include "timer.h"
+#include "keyboard.h"
 #include <stdint.h>
-#include "../libc/macros.h"
-#include "../cpu/paging.h"
-#include "../cpu/kheap.h"
-#include "../cpu/types.h"
+#include "macros.h"
+#include "paging.h"
+#include "kheap.h"
+#include "types.h"
 
 extern "C" void kernel_main(){
 	clear_screen();

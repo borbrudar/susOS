@@ -37,15 +37,12 @@ load_kernel:
 [bits 32]
 BEGIN_PM:
 	;call is_A20_on?
+
 	mov ebx, HELLO32
 	call print32
 	call KERNEL_OFFSET ; jump to kernel position yatta
 	jmp $
 
-A20_on:
-	mov ebx, MSG_A20
-	call print32
-	jmp $
 
 ;globals
 BOOT_DRIVE : db 0

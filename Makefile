@@ -2,8 +2,11 @@
 # $< -- first dependency
 # $@ -- target name
 
+#include dirs
+INCLUDE_DIRS= -I"libc/" -I"drivers/" -I"cpu/" -I"kernel/"
+
 #predefined variables, compiler/linker names etc
-CC=/usr/local/i386elfgcc/bin/i386-elf-g++
+CC=/usr/local/i386elfgcc/bin/i386-elf-g++ ${INCLUDE_DIRS}
 LD=/usr/local/i386elfgcc/bin/i386-elf-ld
 GDB=/usr/local/i386elfgcc/bin/i386-elf-gdb
 FLAGS=-ffreestanding -g -fpermissive -w
