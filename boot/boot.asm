@@ -21,6 +21,7 @@ jmp $
 %include "gdt.asm"
 %include "print32.asm"
 %include "switch_to_pm.asm"
+%include "a20.asm"
 
 [bits 16]
 load_kernel:
@@ -35,10 +36,15 @@ load_kernel:
 
 [bits 32]
 BEGIN_PM:
+	;call is_A20_on?
 	mov ebx, HELLO32
 	call print32
-
 	call KERNEL_OFFSET ; jump to kernel position yatta
+	jmp $
+
+A20_on:
+	mov ebx, MSG_A20
+	call print32
 	jmp $
 
 ;globals
@@ -46,6 +52,7 @@ BOOT_DRIVE : db 0
 HELLO  db "Hello 16-bit world!", 0
 HELLO32  db "Hello 32-bit world!", 0
 MSG_LOAD_KERNEL db "Loading kernel." ,0
+MSG_A20 db "A20 line on." ,0
 
 ;rest is 0 and magic
 times 510-($-$$) db 0
