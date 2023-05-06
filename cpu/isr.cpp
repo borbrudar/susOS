@@ -81,7 +81,7 @@ extern "C" void isr_install(){
 }
 
 //error messages
-char *exception_messages[] = {
+const char *exception_messages[] = { (const char*) //to remove warning
 	"Divison by zero",
 	"Debug",
 	"Non maskable interrupt",

@@ -9,7 +9,7 @@ int8_t standard_less_predicate(type_t a,type_t b){
 
 ordered_array_t create_ordered_array(uint32_t maxsize, lessthan_predicate_t less_than){
     ordered_array_t ret;
-    ret.array = (void*) kmalloc(maxsize*sizeof(type_t));
+    ret.array = (void**) kmalloc(maxsize*sizeof(type_t));
     memset(ret.array,0,maxsize * sizeof(type_t));
     ret.size = 0;
     ret.max_size = maxsize;

@@ -56,6 +56,7 @@ static int32_t first_frame(){
             if(!(frames[i]&toTest)) return i*32+j;
         }
     }
+    return -1; // error ig idk
 }
 
 // actual allocation

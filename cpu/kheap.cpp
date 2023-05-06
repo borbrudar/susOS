@@ -222,7 +222,7 @@ void *alloc_heap(uint32_t size, uint8_t page_align, heap_t *heap){
        else
        {
            // The last header needs adjusting.
-           header_t *header = lookup_ordered_array(idx, &heap->index);
+           header_t *header = (header_t*)lookup_ordered_array(idx, &heap->index);
            header->size += new_length - old_length;
            // Rewrite the footer.
            footer_t *footer = (footer_t *) ( (uint32_t)header + header->size - sizeof(footer_t) );

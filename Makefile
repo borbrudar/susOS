@@ -6,10 +6,10 @@
 INCLUDE_DIRS= -I"libc/" -I"drivers/" -I"cpu/" -I"kernel/"
 
 #predefined variables, compiler/linker names etc
-CC=/usr/local/i386elfgcc/bin/i386-elf-g++ ${INCLUDE_DIRS}
+CC=/usr/local/i386elfgcc/bin/i386-elf-g++ 
 LD=/usr/local/i386elfgcc/bin/i386-elf-ld
 GDB=/usr/local/i386elfgcc/bin/i386-elf-gdb
-FLAGS=-ffreestanding -g -fpermissive -w
+FLAGS=-ffreestanding -g -fpermissive ${INCLUDE_DIRS}
 #DEBUG_FLAGS=-g -fpermissive -w
 
 
