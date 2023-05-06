@@ -1,6 +1,6 @@
 #pragma once
 #include "types.h"
-#include "../libc/ordered_array.h"
+#include "ordered_array.h"
 #include <stdint.h>
 
 //#define KHEAP_START 0xC0000000

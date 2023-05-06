@@ -1,6 +1,6 @@
 #include "kheap.h"
-#include "../libc/mem.h"
-#include "../libc/macros.h"
+#include "mem.h"
+#include "macros.h"
 #include "paging.h"
 
 

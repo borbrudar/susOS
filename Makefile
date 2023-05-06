@@ -3,7 +3,9 @@
 # $@ -- target name
 
 #include dirs
-INCLUDE_DIRS= -I"libc/" -I"drivers/" -I"cpu/" -I"kernel/"
+__INCLUDE_DIRS = $(wildcard */ */*/ */*/ */*/*/ */*/*/)
+INCLUDE_DIRS=$(__INCLUDE_DIRS:%=-I%)
+#INCLUDE_DIRS= -I"libc/" -I"drivers/" -I"cpu/" -I"kernel/"
 
 #predefined variables, compiler/linker names etc
 CC=/usr/local/i386elfgcc/bin/i386-elf-g++ 
@@ -12,11 +14,16 @@ GDB=/usr/local/i386elfgcc/bin/i386-elf-gdb
 FLAGS=-ffreestanding -g -fpermissive ${INCLUDE_DIRS}
 #DEBUG_FLAGS=-g -fpermissive -w
 
+#asm sources
+ASM_SOURCES=$(filter-out $(wildcard boot/*), $(wildcard */*.asm  */*/*.asm */*/*/*.asm))
+ASM_O= $(ASM_SOURCES:.asm=.o)
 
 # sources n shit, convert to obj files
-C_SOURCES = $(wildcard kernel/*.cpp drivers/*.cpp cpu/*.cpp libc/*.cpp)
-HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h libc/*.h)
-OBJ = ${C_SOURCES:.cpp=.o cpu/interrupt.o}
+C_SOURCES = $(wildcard */*.cpp */*/*.cpp */*/*/*.cpp)
+HEADERS = $(wildcard */*.h */*/*.h */*/*/*.h)
+OBJ = ${C_SOURCES:.cpp=.o} ${ASM_O}
+
+CLEAN= ${wildcard *.elf *.o *.bin */*.elf */*.o */*.bin */*/*.elf */*/*.o */*/*.bin */*/*/*.elf */*/*/*.o */*/*/*.bin}
 
 
 all: os-image.bin
@@ -57,10 +64,9 @@ debug: os-image.bin kernel.elf
 
 
 %.bin : %.asm
-	nasm -f bin -I 'boot/' -I 'cpu/' $< -o $@
+	nasm -f bin ${INCLUDE_DIRS} $< -o $@
 
 # phony clean target
 clean:
 	rm -rf *.bin *.o *.dis os-image.bin *.elf
-	rm -rf kernel/*.o boot/*.bin drivers/*.o kernel/*.elf drivers/*.elf
-	rm -rf cpu/*.o cpu/*.elf libc/*.o
+	rm -rf ${CLEAN}
